@@ -8,31 +8,19 @@ on:
         description: 'target to compile'
         options:
         - K2P
-        - JD-LUBAN
+        - JDCLOUD-RE-SP-01B
+        - JDCLOUD-RE-CP-02
         - RM2100
         - R2100
         - K2P-USB
         - CR660x
-        - JCG-Q20
-        - JCG-AC860M
-        - JCG-AC876M
-        - JCG-Y2
-        - DIR-878
-        - DIR-882
-        - MR2600
         - MI-R3P
         - MI-R3G
         - NEWIFI
-        - XY-C1
-        - WR1200JS
-        - MSG1500
-        - BELL-A040WQ
-        - ZTE-E8820S
-        - B70
       plugins:
         description: 'json format string of include configs'
         required: true
-        default: '{"cpu_overclock":"n","aria":"y","transmission":"y","vpnsvr":"n","vpncli":"n","vpncmd":"n","ss":"n","v2ray":"n","xray":"n","trojan":"n","ssobfs":"n","dnsforwarder":"n","adbyby":"n","adguardhome":"n","smartdns":"n","aliddns":"n","zerotier":"n","ddnsto":"n","wireguard":"n","aldriver":"n","sqm":"n","mentohust":"n","scutclient":"n","njitclient":"n","minieap":"n","dogcom":"n"}'
+        default: '{"cpu_overclock":"n","aria":"y","transmission":"y","vpnsvr":"n","vpncli":"n","vpncmd":"n","ss":"n","v2ray":"n","xray":"n","trojan":"n","ssobfs":"n","dnsforwarder":"n","adbyby":"n","adguardhome":"n","smartdns":"n","aliddns":"n","zerotier":"y","ddnsto":"n","wireguard":"n","aldriver":"n","sqm":"n","mentohust":"n","scutclient":"n","njitclient":"n","minieap":"n","dogcom":"n"}'
       cpu_set:
         type: choice
         description: '1000Mhz=0x312 1100Mhz=0x362 1120Mhz=0x372 1200Mhz=0x3B2'
@@ -44,7 +32,7 @@ on:
       firmwarever:
         description: 'firmware''s version'
         required: true
-        default: '20230323'
+        default: '20231104'
       uploadwet:
         type: boolean
         description: 'upload firmware to wetransfer'
