@@ -18,7 +18,7 @@ on:
       plugins:
         description: 'json format string of include configs'
         required: true
-        default: '{"cpu_overclock":"n","aria":"y","transmission":"y","zerotier":"n","wyy":"n","wyygo":"n""vpnsvr":"n","vpncli":"n","vpncmd":"n","ss":"n","v2ray":"n","xray":"n","trojan":"n","ssobfs":"n","dnsforwarder":"n","adbyby":"n","adguardhome":"n","smartdns":"n","aliddns":"n","ddnsto":"n","wireguard":"n","aldriver":"n","sqm":"n","mentohust":"n","scutclient":"n","njitclient":"n","minieap":"n","dogcom":"n"}'
+        default: '{"cpu_overclock":"n","aria":"y","transmission":"y","zerotier":"n","wyy":"n","wyybin":"n","vpnsvr":"n","vpncli":"n","vpncmd":"n","ss":"n","v2ray":"n","xray":"n","trojan":"n","ssobfs":"n","dnsforwarder":"n","adbyby":"n","adguardhome":"n","smartdns":"n","aliddns":"n","ddnsto":"n","wireguard":"n","aldriver":"n","sqm":"n","mentohust":"n","scutclient":"n","njitclient":"n","minieap":"n","dogcom":"n"}'
       cpu_set:
         type: choice
         description: '1000Mhz=0x312 1100Mhz=0x362 1120Mhz=0x372 1200Mhz=0x3B2'
@@ -106,7 +106,7 @@ jobs:
         echo "dogcom=${{fromJson(github.event.inputs.plugins).dogcom}}" >> $GITHUB_ENV
         echo "cpu_overclock=${{fromJson(github.event.inputs.plugins).cpu_overclock}}" >> $GITHUB_ENV
         echo "wyy=${{fromJson(github.event.inputs.plugins).wyy}}" >> $GITHUB_ENV
-        echo "wyygo=${{fromJson(github.event.inputs.plugins).wyygo}}" >> $GITHUB_ENV
+        echo "wyybin=${{fromJson(github.event.inputs.plugins).wyybin}}" >> $GITHUB_ENV
     - name: Custom config
       run: |
         cd $WORK_PATH/trunk
@@ -193,7 +193,7 @@ jobs:
         #校园网相关结束
         #解锁网易云音乐
         echo "CONFIG_FIRMWARE_INCLUDE_WYY=${{env.wyy}}" >> .config #网易云解锁
-        echo "CONFIG_FIRMWARE_INCLUDE_WYYBIN=${{env.wyygo}}" >> .config #网易云解锁GO版本执行文件（4M多）注意固件超大小,不集成会自动下载
+        echo "CONFIG_FIRMWARE_INCLUDE_WYYBIN=${{env.wyybin}}" >> .config #网易云解锁GO版本执行文件（4M多）注意固件超大小,不集成会自动下载
         #########################################################################################
         #自定义添加其它功能请参考源码configs/templates/目录下的config文件。按照上面的格式添加即可
         #格式如下：
