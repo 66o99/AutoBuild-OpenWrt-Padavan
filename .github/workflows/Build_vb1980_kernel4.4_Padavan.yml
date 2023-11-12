@@ -63,6 +63,11 @@ on:
       cpu_set:
         type: choice
         description: '1000Mhz=0x312 1100Mhz=0x362 1120Mhz=0x372 1200Mhz=0x3B2'
+        options:
+        - '0x312'
+        - '0x362'
+        - '0x372'
+        - '0x3B2'
       rainbowui:
         type: boolean
         description: 'apply rainbow ui'
@@ -78,10 +83,17 @@ on:
       firmwarever:
         description: 'firmware''s version'
         required: true
-        default: '20220520'
-      uploadanon:
+        default: '20231112'
+      uploadwet:
         type: boolean
-        description: 'upload firmware to anonfiles'
+        description: 'upload firmware to wetransfer'
+        required: false
+        default: 'false'
+
+      upload_release:
+        type: boolean
+        description: 'upload firmware to RELEASE'
+        required: true
         default: 'false'
 env:
   REPOSITORY_URL: https://github.com/lu-1991/padavan-4.4.git
