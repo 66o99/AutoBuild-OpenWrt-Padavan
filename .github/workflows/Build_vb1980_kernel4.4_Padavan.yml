@@ -106,7 +106,7 @@ jobs:
         echo "dogcom=${{fromJson(github.event.inputs.plugins).dogcom}}" >> $GITHUB_ENV
         echo "cpu_overclock=${{fromJson(github.event.inputs.plugins).cpu_overclock}}" >> $GITHUB_ENV
         echo "wyy=${{fromJson(github.event.inputs.plugins).wyy}}" >> $GITHUB_ENV
-        echo "wyybin=${{fromJson(github.event.inputs.plugins).wyybin}}" >> $GITHUB_ENV #网易云解锁GO版本执行文件（4M多）注意固件超大小,不集成会自动下载
+        echo "wyybin=${{fromJson(github.event.inputs.plugins).wyybin}}" >> $GITHUB_ENV
     - name: Custom config
       run: |
         cd $WORK_PATH/trunk
