@@ -60,6 +60,9 @@ on:
         description: 'json format string of include configs'
         required: true
         default: '{"cpu_overclocking":"n","aria":"y","transmission":"y","wyy":"n","wyybin":"n","vpnsvr":"n","vpncli":"n","vpncmd":"n","ss":"n","v2ray":"n","xray":"n","trojan":"n","ssobfs":"n","dnsforwarder":"n","adbyby":"n","adguardhome":"n","smartdns":"n","aliddns":"n","zerotier":"y","ddnsto":"n","wireguard":"n","frpc":"n","aldriver":"n","sqm":"n","mentohust":"n","scutclient":"n","njitclient":"n","minieap":"n","dogcom":"n"}'
+      cpu_set:
+        type: choice
+        description: '1000Mhz=0x312 1100Mhz=0x362 1120Mhz=0x372 1200Mhz=0x3B2'
       rainbowui:
         type: boolean
         description: 'apply rainbow ui'
