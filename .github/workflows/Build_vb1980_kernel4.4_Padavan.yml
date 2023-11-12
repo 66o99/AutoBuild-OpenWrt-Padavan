@@ -1,4 +1,4 @@
-name: AutoBuild vb1980's Kernel4.4 Padavan
+name: Build vb1980's kernel4.4 Padavan
 
 on:
   workflow_dispatch:
@@ -7,45 +7,81 @@ on:
         type: choice
         description: 'target to compile'
         options:
-        - K2P
-        - JDCLOUD-RE-SP-01B
-        - JDCLOUD-RE-CP-02
-        - K2P-USB
-        - CR660x
-        - MI-R3P
-        - MI-R3G
-        - NEWIFI
+        - Gee_B70
+        - Nokia-Sbell_A-040W-Q
+        - Xiaomi_CR6606
+        - Xiaomi_CR6608
+        - Xiaomi_CR6609
+        - DLINK_DIR-878
+        - DLINK_DIR-882
+        - ZTE_E8820V2
+        - Linksys_EA7500
+        - GHL_R-001
+        - Hair_HAR-20S2U1
+        - JCG_836PRO
+        - JCG_AC860M
+        - JCQ_Q20-PB
+        - JCQ_Q20
+        - JCQ_Q10Pro
+        - JCG_Y2
+        - JDCloud_Luban
+        - JDCloud_1
+        - Phicomm_K2P-NANO
+        - Phicomm_K2P-USB
+        - Phicomm_K2P
+        - Xiaomi_4
+        - Xiaomi_R3G
+        - Xiaomi_R3P-PB
+        - Xiaomi_R3P-SPI
+        - Xiaomi_R3P
+        - Xiaomi_R4A
+        - Motorola_MR2600
+        - Raisecom_MSG1500_Z.00
+        - Raisecom_MSG1500_X.00
+        - Lenovo_NEWIFI2
+        - Diting_NEWIFI3
+        - QianmoBus_B1
+        - Xiaomi_AC2100
+        - Netgear_R6800
+        - Redmi_AC2100
+        - Asus_RT-AC85P
+        - SIM_AX1800T
+        - H3C_TX1801
+        - H3C_TX1806
+        - Arcadyan_WE410443-TC
+        - Youhua_WR1200JS
+        - Youhua_WR330
+        - Xiaoyu_C1
+        - Xiaoyu_C3
+        - Xiaoyu_C5
+        - ZTE_E8820S
+        default: JDCloud_Luban
       plugins:
         description: 'json format string of include configs'
         required: true
-        default: '{"cpu_overclock":"n","aria":"y","transmission":"y","zerotier":"n","wyy":"n","wyybin":"n","vpnsvr":"n","vpncli":"n","vpncmd":"n","ss":"n","v2ray":"n","xray":"n","trojan":"n","ssobfs":"n","dnsforwarder":"n","adbyby":"n","adguardhome":"n","smartdns":"n","aliddns":"n","ddnsto":"n","wireguard":"n","aldriver":"n","sqm":"n","mentohust":"n","scutclient":"n","njitclient":"n","minieap":"n","dogcom":"n"}'
-      cpu_set:
-        type: choice
-        description: '1000Mhz=0x312 1100Mhz=0x362 1120Mhz=0x372 1200Mhz=0x3B2'
-        options:
-        - '0x312'
-        - '0x362'
-        - '0x372'
-        - '0x3B2'
+        default: '{"vpnsvr":"n","vpncli":"n","vpncmd":"n","ss":"y","v2ray":"n","xray":"y","trojan":"y","ssobfs":"y","dnsforwarder":"n","adbyby":"n","adguardhome":"n","smartdns":"n","aliddns":"n","zerotier":"n","ddnsto":"n","wireguard":"n","frpc":"y","aldrive":"n","sqm":"y","mentohust":"n","scutclient":"n","njitclient":"n","minieap":"n","dogcom":"n"}'
+      rainbowui:
+        type: boolean
+        description: 'apply rainbow ui'
+        default: 'false'
+      specializedlogo:
+        type: boolean
+        description: 'apply specialized logo for e8820s or a-040w-q'
+        default: 'false'
+      changebrandlogo:
+        type: boolean
+        description: 'change brand logo image for specialized router'
+        default: 'false'
       firmwarever:
         description: 'firmware''s version'
         required: true
-        default: '20231112'
-      uploadwet:
+        default: '20220520'
+      uploadanon:
         type: boolean
-        description: 'upload firmware to wetransfer'
-        required: false
+        description: 'upload firmware to anonfiles'
         default: 'false'
-
-      upload_release:
-        type: boolean
-        description: 'upload firmware to RELEASE'
-        required: true
-        default: 'false'
-
 env:
   REPOSITORY_URL: https://github.com/lu-1991/padavan-4.4.git
-  TOOLCHAIN_URL: https://github.com/hanwckf/padavan-toolchain/releases/download/linux-4.4-v1.0/mipsel-linux-uclibc.tar.xz
   WORK_PATH: /opt/padavan-4.4
   TIME_ZONE: Asia/Shanghai
   FIRMWARE_DATEPREFIX: $(date +"%Y%m%d")
@@ -53,12 +89,173 @@ env:
   FIRMWARE_PATH: /opt/firmwares
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     if: github.event.repository.owner.id == github.event.sender.id
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@main
+    - uses: actions/checkout@v3
+    - uses: hendrikmuhs/ccache-action@v1.2
+    - uses: kanga333/variable-mapper@master
+      id: export
+      with:
+        key: "${{ github.event.inputs.target }}"
+        map: |
+          {
+            "Gee_B70": {
+              "model": "B70"
+            },
+            "Nokia-Sbell_A-040W-Q": {
+              "model": "BELL-A040WQ"
+            },
+            "Xiaomi_CR6606": {
+              "model": "CR660x"
+            },
+            "Xiaomi_CR6608": {
+              "model": "CR660x"
+            },
+            "Xiaomi_CR6609": {
+              "model": "CR660x"
+            },
+            "DLINK_DIR-878": {
+              "model": "DIR-878"
+            },
+            "DLINK_DIR-882": {
+              "model": "DIR-882"
+            },
+            "ZTE_E8820V2": {
+              "model": "E8820V2"
+            },
+            "Linksys_EA7500": {
+              "model": "EA7500"
+            },
+            "GHL_R-001": {
+              "model": "GHL"
+            },
+            "Hair_HAR-20S2U1": {
+              "model": "HAR-20S2U1"
+            },
+            "JCG_836PRO": {
+              "model": "JCG-836PRO"
+            },
+            "JCG_AC860M": {
+              "model": "JCG-AC860M"
+            },
+            "JCQ_Q20-PB": {
+              "model": "JCG-Q20-PB"
+            },
+            "JCQ_Q20": {
+              "model": "JCG-Q20"
+            },
+            "JCQ_Q10Pro": {
+              "model": "JCG-Q20"
+            },
+            "JCG_Y2": {
+              "model": "JCG-Y2"
+            },
+            "JDCloud_Luban": {
+              "model": "JDCLOUD-RE-CP-02"
+            },
+            "JDCloud_1": {
+              "model": "JDCLOUD-RE-SP-01B"
+            },
+            "Phicomm_K2P-NANO": {
+              "model": "K2P-NANO"
+            },
+            "Phicomm_K2P-USB": {
+              "model": "K2P-USB"
+            },
+            "Phicomm_K2P": {
+              "model": "K2P"
+            },
+            "Xiaomi_4": {
+              "model": "MI-4"
+            },
+            "Xiaomi_R3G": {
+              "model": "MI-R3G"
+            },
+            "Xiaomi_R3P-PB": {
+              "model": "MI-R3P-PB"
+            },
+            "Xiaomi_R3P-SPI": {
+              "model": "MI-R3P-SPI"
+            },
+            "Xiaomi_R3P": {
+              "model": "MI-R3P"
+            },
+            "Xiaomi_R4A": {
+              "model": "MI-R4A"
+            },
+            "Motorola_MR2600": {
+              "model": "MR2600"
+            },
+            "Raisecom_MSG1500_Z.00": {
+              "model": "MSG1500-Z"
+            },
+            "Raisecom_MSG1500_X.00": {
+              "model": "MSG1500"
+            },
+            "Lenovo_NEWIFI2": {
+              "model": "NEWIFI"
+            },
+            "Diting_NEWIFI3": {
+              "model": "NEWIFI3"
+            },
+            "QianmoBus_B1": {
+              "model": "QM-B1"
+            },
+            "Xiaomi_AC2100": {
+              "model": "R2100"
+            },
+            "Netgear_R6800": {
+              "model": "R6800"
+            },
+            "Redmi_AC2100": {
+              "model": "RM2100"
+            },
+            "Asus_RT-AC85P": {
+              "model": "RT-AC85P"
+            },
+            "SIM_AX1800T": {
+              "model": "SIM-AX1800T"
+            },
+            "H3C_TX1801": {
+              "model": "TX1801"
+            },
+            "H3C_TX1806": {
+              "model": "TX1801"
+            },
+            "Arcadyan_WE410443-TC": {
+              "model": "WE410443-TC"
+            },
+            "Youhua_WR1200JS": {
+              "model": "WR1200JS"
+            },
+            "Youhua_WR330": {
+              "model": "WR1200JS"
+            },
+            "Xiaoyu_C1": {
+              "model": "XY-C1"
+            },
+            "Xiaoyu_C3": {
+              "model": "XY-C1"
+            },
+            "Xiaoyu_C5": {
+              "model": "XY-C1"
+            },
+            "ZTE_E8820S": {
+              "model": "ZTE-E8820S"
+            },
+            ".*": {
+              "model": "K2P"
+            }
+          }
+        export_to: env
+        mode: first_match
+    - uses: actions/setup-go@v4
+      with:
+        go-version: '1.21.1'
+        check-latest: true
+        cache-dependency-path: '**/go.sum'
     - name: Initialization environment
       env:
         DEBIAN_FRONTEND: noninteractive
@@ -67,20 +264,63 @@ jobs:
         sudo apt install unzip libtool-bin curl cmake gperf gawk flex bison nano xxd \
         fakeroot kmod cpio git python3-docutils gettext automake autopoint \
         texinfo build-essential help2man pkg-config zlib1g-dev libgmp3-dev \
-        libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev wget libc-dev-bin
+        libmpc-dev libmpfr-dev libncurses5-dev libltdl-dev wget libc-dev-bin libev-dev
         sudo timedatectl set-timezone "$TIME_ZONE"
     - name: Clone source code
       run: |
         git clone --depth=1 $REPOSITORY_URL $WORK_PATH
-        cd $WORK_PATH/toolchain-mipsel
-        mkdir -p toolchain-4.4.x
-        wget $TOOLCHAIN_URL
-        tar -xf mipsel-linux-uclibc.tar.xz -C toolchain-4.4.x
-        
+        cd $WORK_PATH
+        sed -i '/cp -f/d' Makefile
+    - name: Extract toolchain
+      run: |
+        cp -f toolchain/mipsel-linux-uclibc-gcc10.tar.xz $WORK_PATH
+        cd $WORK_PATH
+        mkdir -p toolchain-mipsel/toolchain-4.4.x
+        tar -Jxvf mipsel-linux-uclibc-gcc10.tar.xz -C toolchain-mipsel/toolchain-4.4.x
+    - name: Apply rainbow themes
+      if: github.event.inputs.rainbowui == 'true'
+      run: |
+        #cp -f formlogin/httpd.c $WORK_PATH/trunk/user/httpd
+        cd $WORK_PATH/trunk/user/httpd
+        git apply formlogin.patch
+        cd $WORK_PATH/trunk/user/www
+        sed -i "s/WEBUI_NAME=n56u_ribbon_fixed/WEBUI_NAME=n56u_rainbow/g" ./Makefile
+    - name: Apply specialized logo
+      if: github.event.inputs.specializedlogo == 'true'
+      run: |
+        logoFile=
+        if [ "${{ env.model }}" = "BELL-A040WQ" ]; then
+        logoFile="a040wq/bell_asus_logo.png"
+        fi
+        if [ "${{ env.model }}" = "ZTE-E8820S" ]; then
+        logoFile="e8820s/zte_asus_logo.png"
+        fi
+        if [ "${{ env.model }}" = "MSG1500" ]; then
+        logoFile="msg1500/raisecom_asus_logo.png"
+        fi
+        if [ -n "$logoFile" ]; then
+            cp -f $logoFile $WORK_PATH/trunk/user/www/n56u_ribbon_fixed/bootstrap/img/asus_logo.png
+            if [ "${{ github.event.inputs.rainbowui }}" = "true" ]; then
+                cp -f $logoFile $WORK_PATH/trunk/user/www/n56u_rainbow/bootstrap/img/logo_blue.png
+                cp -f $logoFile $WORK_PATH/trunk/user/www/n56u_rainbow/bootstrap/img/logo_cyan.png
+                cp -f $logoFile $WORK_PATH/trunk/user/www/n56u_rainbow/bootstrap/img/logo_green.png
+                cp -f $logoFile $WORK_PATH/trunk/user/www/n56u_rainbow/bootstrap/img/logo_orange.png
+                cp -f $logoFile $WORK_PATH/trunk/user/www/n56u_rainbow/bootstrap/img/logo_purple.png
+                cp -f $logoFile $WORK_PATH/trunk/user/www/n56u_rainbow/bootstrap/img/logo_red.png
+                cp -f $logoFile $WORK_PATH/trunk/user/www/n56u_rainbow/bootstrap/img/logo_yellow.png
+            fi
+        fi
+    - name: Change specialized brand logo image
+      if: github.event.inputs.changebrandlogo == 'true' && github.event.inputs.specializedlogo == 'false'
+      run: |
+        cd $WORK_PATH/trunk
+        if [ "${{ github.event.inputs.rainbowui }}" = "true" ]; then
+            sudo ./change_logo.sh ${{ env.model }} 0
+        else
+            sudo ./change_logo.sh ${{ env.model }}
+        fi
     - name: Parse json string of include plugins
-      run: | 
-        echo "aria=${{fromJson(github.event.inputs.plugins).aria}}" >> $GITHUB_ENV
-        echo "transmission=${{fromJson(github.event.inputs.plugins).transmission}}" >> $GITHUB_ENV
+      run: |
         echo "vpnsvr=${{fromJson(github.event.inputs.plugins).vpnsvr}}" >> $GITHUB_ENV
         echo "vpncli=${{fromJson(github.event.inputs.plugins).vpncli}}" >> $GITHUB_ENV
         echo "vpncmd=${{fromJson(github.event.inputs.plugins).vpncmd}}" >> $GITHUB_ENV
@@ -97,24 +337,25 @@ jobs:
         echo "zerotier=${{fromJson(github.event.inputs.plugins).zerotier}}" >> $GITHUB_ENV
         echo "ddnsto=${{fromJson(github.event.inputs.plugins).ddnsto}}" >> $GITHUB_ENV
         echo "wireguard=${{fromJson(github.event.inputs.plugins).wireguard}}" >> $GITHUB_ENV
-        echo "aldriver=${{fromJson(github.event.inputs.plugins).aldriver}}" >> $GITHUB_ENV
+        echo "frpc=${{fromJson(github.event.inputs.plugins).frpc}}" >> $GITHUB_ENV
+        echo "aldrive=${{fromJson(github.event.inputs.plugins).aldrive}}" >> $GITHUB_ENV
         echo "sqm=${{fromJson(github.event.inputs.plugins).sqm}}" >> $GITHUB_ENV
         echo "mentohust=${{fromJson(github.event.inputs.plugins).mentohust}}" >> $GITHUB_ENV
         echo "scutclient=${{fromJson(github.event.inputs.plugins).scutclient}}" >> $GITHUB_ENV
         echo "njitclient=${{fromJson(github.event.inputs.plugins).njitclient}}" >> $GITHUB_ENV
         echo "minieap=${{fromJson(github.event.inputs.plugins).minieap}}" >> $GITHUB_ENV
         echo "dogcom=${{fromJson(github.event.inputs.plugins).dogcom}}" >> $GITHUB_ENV
-        echo "cpu_overclock=${{fromJson(github.event.inputs.plugins).cpu_overclock}}" >> $GITHUB_ENV
+        echo "cpu_overclocking=${{fromJson(github.event.inputs.plugins).cpu_overclocking}}" >> $GITHUB_ENV
         echo "wyy=${{fromJson(github.event.inputs.plugins).wyy}}" >> $GITHUB_ENV
         echo "wyybin=${{fromJson(github.event.inputs.plugins).wyybin}}" >> $GITHUB_ENV
     - name: Custom config
       run: |
         cd $WORK_PATH/trunk
-        if [ ! -f configs/templates/${{ github.event.inputs.target }}.config ] ; then
-        echo "configs/templates/${{ github.event.inputs.target }}.config not found"
+        if [ ! -f configs/templates/${{ env.model }}.config ] ; then
+        echo "configs/templates/${{ env.model }}.config not found"
         exit 1
         fi
-        cp -f configs/templates/${{ github.event.inputs.target }}.config .config
+        cp -f configs/templates/${{ env.model }}.config .config
         ################################################################################################
         #因不同型号配置功能不一样，所以先把配置项删除，如果你自己要添加其他的，也要写上删除这一条，切记！！！
         ################################################################################################
@@ -129,12 +370,17 @@ jobs:
         sed -i '/CONFIG_FIRMWARE_INCLUDE_ALIDDNS/d' .config #删除配置项阿里DDNS
         sed -i '/CONFIG_FIRMWARE_INCLUDE_SRELAY/d' .config #删除配置项srelay
         sed -i '/CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME/d' .config #删除配置项adguardhome
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SMARTDNS/d' .config #删除配置项smartdns
         sed -i '/CONFIG_FIRMWARE_INCLUDE_ZEROTIER/d' .config #删除配置项zerotier
         sed -i '/CONFIG_FIRMWARE_INCLUDE_DDNSTO/d' .config #删除配置项ddnsto
         sed -i '/CONFIG_FIRMWARE_INCLUDE_WIREGUARD/d' .config #删除配置项wireguard
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_FRPS/d' .config #删除配置项frp server
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_FRPC/d' .config #删除配置项frp client
         sed -i '/CONFIG_FIRMWARE_INCLUDE_ALDRIVER/d' .config #删除配置项阿里云盘
-        sed -i '/CONFIG_FIRMWARE_INCLUDE_SMARTDNS/d' .config #删除配置项smartdns
-        sed -i '/CONFIG_FIRMWARE_INCLUDE_SQM/d' .config #删除配置项sqm
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_SQM/d' .config #删除配置项QOS流控
+        #cpu超频
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_OC/d' .config #删除配置项cpu超频
+        sed -i '/CONFIG_FIRMWARE_MT7621_OC/d' .config
         #下载功能
         sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA/d' .config #删除配置项aria
         sed -i '/CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL/d' .config #删除配置项aria网页控制台
@@ -165,7 +411,7 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_SRELAY=n" >> .config #可以不集成
         echo "CONFIG_FIRMWARE_INCLUDE_TUNSAFE=n" >> .config #tunsafe
         echo "CONFIG_FIRMWARE_INCLUDE_DNSFORWARDER=${{env.dnsforwarder}}" >> .config #dnsforwarder
-        #去广告
+        #
         echo "CONFIG_FIRMWARE_INCLUDE_ADBYBY=${{env.adbyby}}" >> .config #adbyby plus+
         #
         echo "CONFIG_FIRMWARE_INCLUDE_ADGUARDHOME=${{env.adguardhome}}" >> .config #adguardhome
@@ -175,10 +421,11 @@ jobs:
         echo "CONFIG_FIRMWARE_INCLUDE_ZEROTIER=${{env.zerotier}}" >> .config #zerotier ~1.3M
         echo "CONFIG_FIRMWARE_INCLUDE_DDNSTO=${{env.ddnsto}}" >> .config #ddnsto
         echo "CONFIG_FIRMWARE_INCLUDE_WIREGUARD=${{env.wireguard}}" >> .config #wireguard
+        echo "CONFIG_FIRMWARE_INCLUDE_FRPS=n" >> .config #frp server
+        echo "CONFIG_FIRMWARE_INCLUDE_FRPC=${{env.frpc}}" >> .config #frp client
         #
-        echo "CONFIG_FIRMWARE_INCLUDE_ALDRIVER=${{env.aldriver}}" >> .config #阿里云盘
-        echo "CONFIG_FIRMWARE_INCLUDE_SQM=${{env.sqm}}" >> .config #SQM
-        #
+        echo "CONFIG_FIRMWARE_INCLUDE_ALDRIVER=${{env.aldrive}}" >> .config #阿里云盘
+        echo "CONFIG_FIRMWARE_INCLUDE_SQM=${{env.sqm}}" >> .config #QOS流控
         #下载功能
         echo "CONFIG_FIRMWARE_INCLUDE_ARIA=${{env.aria}}" >> .config #配置项aria
         echo "CONFIG_FIRMWARE_INCLUDE_ARIA_WEB_CONTROL=${{env.aria}}" >> .config #配置项aria网页控制台
@@ -194,6 +441,9 @@ jobs:
         #解锁网易云音乐
         echo "CONFIG_FIRMWARE_INCLUDE_WYY=${{env.wyy}}" >> .config #网易云解锁
         echo "CONFIG_FIRMWARE_INCLUDE_WYYBIN=${{env.wyybin}}" >> .config #网易云解锁GO版本执行文件（4M多）注意固件超大小,不集成会自动下载
+        #cpu超频
+        echo "CONFIG_FIRMWARE_INCLUDE_OC=${{env.cpu_overclocking}}" >> .config #CPU超频开关
+        echo 'CONFIG_FIRMWARE_MT7621_OC="${{ github.event.inputs.cpu_set}}"' >> .config #此处填写对应频率的十六进制：1000Mhz=0x312 1100Mhz=0x362 1120Mhz=0x372 1200Mhz=0x3B2
         #########################################################################################
         #自定义添加其它功能请参考源码configs/templates/目录下的config文件。按照上面的格式添加即可
         #格式如下：
@@ -202,31 +452,31 @@ jobs:
         sed -i "s/FIRMWARE_BUILDS_REV=.*/FIRMWARE_BUILDS_REV=${{ github.event.inputs.firmwarever }}/g" ./versions.inc
         echo '更新版本号时间'
         #########################################################################################
-    - name: cpu_set
-      if: ${{env.cpu_overclock}}== y
-      run: |
-        cd $WORK_PATH/trunk
-        echo "CONFIG_FIRMWARE_INCLUDE_OC=${{env.cpu_overclock}}" >> .config #CPU超频开关
-        echo 'CONFIG_FIRMWARE_MT7621_OC="${{ github.event.inputs.cpu_set}}"' >> .config #此处填写对应频率的十六进制：1000Mhz=0x312 1100Mhz=0x362 1120Mhz=0x372 1200Mhz=0x3B2
 
+        
+        
     - name: Build firmware
       run: |
-        cd $WORK_PATH/trunk
-        sudo make ${{ github.event.inputs.target }} 0
+        cd $WORK_PATH
+        sudo make ${{ env.model }}
         echo "FIRMWARE_DATEPREFIX=$(date +"%Y%m%d")" >> $GITHUB_ENV
         
     - name: Organize firmware files
       id: organize
       run: |
+        rainbow_Prefix=""
+        if [ "${{ github.event.inputs.rainbowui }}" = "true" ]; then
+            rainbow_Prefix="rainbow_"
+        fi
         mkdir -p $FIRMWARE_PATH/
         cd $WORK_PATH/trunk/images
         for firmwarefile in $(ls *.trx)
-        do sudo mv $firmwarefile $FIRMWARE_PATH/${FIRMWARE_DATEPREFIX}"_"${FIRMWARE_AUTHOR}"_"${{ github.event.inputs.target }}"_kernel4.4.trx"
+        do sudo mv $firmwarefile $FIRMWARE_PATH/${FIRMWARE_DATEPREFIX}"_"${FIRMWARE_AUTHOR}"_"${{ env.model }}"_"${rainbow_Prefix}"kernal4.4.trx"
         done
         cd $FIRMWARE_PATH
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-        echo "status=success" >> $GITHUB_OUTPUT
-        
+        echo "STATUS=success" >> $GITHUB_ENV
+     
     - name : Upload packages
       uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success'
@@ -283,3 +533,10 @@ jobs:
       with:
         age: '1 day'
         skip-recent: 5
+
+
+        #########################################################################################
+
+
+          
+    
