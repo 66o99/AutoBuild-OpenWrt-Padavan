@@ -479,18 +479,14 @@ jobs:
     - name: Organize firmware files
       id: organize
       run: |
-        rainbow_Prefix=""
-        if [ "${{ github.event.inputs.rainbowui }}" = "true" ]; then
-            rainbow_Prefix="rainbow_"
-        fi
         mkdir -p $FIRMWARE_PATH/
         cd $WORK_PATH/trunk/images
         for firmwarefile in $(ls *.trx)
-        do sudo mv $firmwarefile $FIRMWARE_PATH/${FIRMWARE_DATEPREFIX}"_"${FIRMWARE_AUTHOR}"_"${{ env.model }}"_"${rainbow_Prefix}"kernal4.4.trx"
+        do sudo mv $firmwarefile $FIRMWARE_PATH/${FIRMWARE_DATEPREFIX}"_"${FIRMWARE_AUTHOR}"_"${{ github.event.inputs.target }}"_kernel4.4.trx"
         done
         cd $FIRMWARE_PATH
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
-        echo "STATUS=success" >> $GITHUB_ENV
+        echo "status=success" >> $GITHUB_OUTPUT
      
     - name : Upload packages
       uses: actions/upload-artifact@main
