@@ -117,11 +117,6 @@ jobs:
 
     - name: Update feeds
       run: cd openwrt && ./scripts/feeds update -a
-      
-    - name: add luci-theme-argonne 21.02
-      run: |
-           cd openwrt && rm -rf feeds/kenzo/luci-theme-argonne
-           git clone -b 21.02 https://github.com/kenzok78/luci-theme-argonne.git feeds/kenzo/luci-theme-argonne
 
     - name: Install feeds
       run: cd openwrt && ./scripts/feeds install -a
