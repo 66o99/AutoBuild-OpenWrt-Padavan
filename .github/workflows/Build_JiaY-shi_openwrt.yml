@@ -17,7 +17,7 @@ on:
       model:
         description: '选择机型'
         required: true
-          default: 'JDCloud_AX1800Pro' 
+        default: 'JDCloud_AX1800Pro'
         type: choice
         options:
           - 'JDCloud_AX1800Pro'
